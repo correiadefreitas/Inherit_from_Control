@@ -11,10 +11,10 @@ namespace TestWebApp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //if (IsPostBack)
-            //{
-            //    lblEmail.Text = LoginControl1.Email;
-            //}
+            if (!IsPostBack)
+            {
+                LoginControl1.EmailTitle = "aaa";
+            }
         }
 
         protected void LoginControl1_Submit(object sender, Company.CustomControls.LoginControl.LoginEventArgs e)

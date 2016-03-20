@@ -30,7 +30,7 @@ namespace Company.CustomControls
         private string _EmailTitle;
         private string _PasswordTitle;
 
-        public string Email {
+        private string Email {
             get {
                 return _Email;
             }
@@ -39,11 +39,11 @@ namespace Company.CustomControls
             }
         }
 
-        public string Password {
+        private string Password {
             get {
                 return _Password;
             }
-            private set {
+            set {
                 _Password = value;
             }
         }
@@ -108,16 +108,6 @@ namespace Company.CustomControls
             OnEmailChanged(new LoginEventArgs(Email, Password));
         }
 
-        internal string Serialize(LoginEventArgs e)
-        {
-            return (new JavaScriptSerializer()).Serialize(e);
-        }
-
-        private EventArgs Deserialize(string eventArgument)
-        {
-            return (new JavaScriptSerializer()).Deserialize<LoginEventArgs>(eventArgument);
-        }
-
         protected override object SaveControlState()
         {
             object obj = base.SaveControlState();
@@ -141,7 +131,6 @@ namespace Company.CustomControls
                 }
             }
         }
-
         public bool LoadPostData(string postDataKey, NameValueCollection postCollection)
         {
             Email = postCollection[UniqueID + IdSeparator + "Email"];
@@ -154,11 +143,16 @@ namespace Company.CustomControls
         protected override void Render(HtmlTextWriter writer)
         {
             base.Render(writer);
-            //ToDo: apply layout
+        //ToDo: apply layout
 
-            //ToDo: build label for Email
-            //writer.RenderBeginTag(HtmlTextWriterTag.Label);
-            //writer.RenderEndTag();
+        //ToDo: build label for Email
+            writer.RenderBeginTag(HtmlTextWriterTag.Label);
+            writer.Write(EmailTitle);
+            writer.RenderEndTag();
+
+            writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            writer.RenderEndTag();
+
 
             writer.AddAttribute(HtmlTextWriterAttribute.Id, this.UniqueID + this.IdSeparator + "Email");
             writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID + this.IdSeparator + "Email");
@@ -168,6 +162,10 @@ namespace Company.CustomControls
             writer.RenderBeginTag(HtmlTextWriterTag.Input);
             writer.RenderEndTag();
 
+            writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            writer.RenderEndTag();
+
+
             writer.AddAttribute(HtmlTextWriterAttribute.Id, this.UniqueID + this.IdSeparator + "Password");
             writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID + this.IdSeparator + "Password");
             writer.AddAttribute(HtmlTextWriterAttribute.Type, "Text");
@@ -176,7 +174,10 @@ namespace Company.CustomControls
             writer.RenderBeginTag(HtmlTextWriterTag.Input);
             writer.RenderEndTag();
 
-            //ToDo: write password tag
+            writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            writer.RenderEndTag();
+
+
             writer.AddAttribute(HtmlTextWriterAttribute.Type, "submit");
             writer.AddAttribute(HtmlTextWriterAttribute.Value, "Entrar");
             writer.AddAttribute(HtmlTextWriterAttribute.Id, this.UniqueID);
@@ -186,6 +187,16 @@ namespace Company.CustomControls
             writer.RenderBeginTag(HtmlTextWriterTag.Input);
             writer.RenderEndTag();
         }
+
+        //internal string Serialize(LoginEventArgs e)
+        //{
+        //    return (new JavaScriptSerializer()).Serialize(e);
+        //}
+
+        //private EventArgs Deserialize(string eventArgument)
+        //{
+        //    return (new JavaScriptSerializer()).Deserialize<LoginEventArgs>(eventArgument);
+        //}
 
         public enum LoginLayout : byte
         {
