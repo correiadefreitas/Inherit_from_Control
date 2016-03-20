@@ -22,6 +22,7 @@ namespace Company.CustomControls
     {
         public delegate void LoginEventHandler(object sender, LoginEventArgs e);
         public event LoginEventHandler Submit;
+        public event LoginEventHandler EmailChanged;
 
         private string _Email;
         private string _Password;
@@ -29,27 +30,82 @@ namespace Company.CustomControls
         private string _EmailTitle;
         private string _PasswordTitle;
 
-        public string Email { get { return _Email; } private set { _Email = value; } }
-        public string Password { get { return _Password; } private set { _Password = value; } }
-        public LoginLayout Layout { get { return _Layout; } set { _Layout = value; } }
+        public string Email {
+            get {
+                return _Email;
+            }
+            set {
+                _Email = value;
+            }
+        }
 
-        public string EmailTitle { get { return _EmailTitle; } set { _EmailTitle = value; } }
-        public string PasswordTitle { get { return _PasswordTitle; } set { _PasswordTitle = value; } }
+        public string Password {
+            get {
+                return _Password;
+            }
+            private set {
+                _Password = value;
+            }
+        }
+
+        public LoginLayout Layout {
+            get {
+                return _Layout;
+            }
+            set {
+                _Layout = value;
+            }
+        }
+
+        public string EmailTitle {
+            get {
+                return _EmailTitle;
+            }
+            set {
+                _EmailTitle = value;
+            }
+        }
+
+        public string PasswordTitle {
+            get {
+                return _PasswordTitle;
+            }
+            set {
+                _PasswordTitle = value;
+            }
+        }
 
         //Submit event
-        protected virtual void OnSubmit(LoginEventArgs e)
-        {
+        protected override void OnInit(EventArgs e) {
+            base.OnInit(e);
+            Page.RegisterRequiresPostBack(this);
+            Page.RegisterRequiresControlState(this);
+        }
+
+
+        protected virtual void OnSubmit(LoginEventArgs e) {
             var Submit = this.Submit;
-            if (Submit != null)
-            {
+            if (Submit != null) {
                 Submit(this, e);
             }
         }
 
-        public void RaisePostBackEvent(string eventArgument)
+        protected virtual void OnEmailChanged(LoginEventArgs e)
         {
-            var arg = this.Deserialize(eventArgument);
-            OnSubmit(new LoginEventArgs(Email,Password));
+            var EmailChanged = this.EmailChanged;
+            if (EmailChanged != null)
+            {
+                EmailChanged(this, e);
+            }
+        }
+
+        public void RaisePostBackEvent(string eventArgument) {
+            OnSubmit(new LoginEventArgs(Email, Password));
+        }
+
+        public void RaisePostDataChangedEvent()
+        {
+            OnEmailChanged(new LoginEventArgs(Email, Password));
         }
 
         internal string Serialize(LoginEventArgs e)
@@ -62,27 +118,61 @@ namespace Company.CustomControls
             return (new JavaScriptSerializer()).Deserialize<LoginEventArgs>(eventArgument);
         }
 
-        public bool LoadPostData(string postDataKey, NameValueCollection postCollection)
+        protected override object SaveControlState()
         {
-            Email = postCollection[this.UniqueID.Replace("$", "_") + "Email"];
-            Password = postCollection[this.UniqueID.Replace("$", "_") + "Password"];
-            //Page.RegisterRequiresRaiseEvent(this);
-            return false;
+            object obj = base.SaveControlState();
+            object thisState = new object[] { obj, this.Email, this.EmailTitle, this.Password, this.PasswordTitle, this.Layout };
+            return thisState;
         }
 
-        public void RaisePostDataChangedEvent()
+        protected override void LoadControlState(object state)
         {
-            OnSubmit(new LoginEventArgs(Email, Password));
+            if (state != null)
+            {
+                object[] thisState = state as object[];
+                if (thisState != null)
+                {
+                    base.LoadControlState(thisState[0]);
+                    Email = thisState[1] as string;
+                    EmailTitle = thisState[2] as string;
+                    Password = thisState[3] as string;
+                    PasswordTitle = thisState[4] as string;
+                    Layout = (LoginLayout)(thisState[5] ?? 1);
+                }
+            }
+        }
+
+        public bool LoadPostData(string postDataKey, NameValueCollection postCollection)
+        {
+            Email = postCollection[UniqueID + IdSeparator + "Email"];
+            Password = postCollection[UniqueID + IdSeparator + "Password"];
+            Page.RegisterRequiresRaiseEvent(this);
+            return false;
         }
         //End submit event
 
         protected override void Render(HtmlTextWriter writer)
         {
+            base.Render(writer);
             //ToDo: apply layout
 
-            writer.AddAttribute(HtmlTextWriterAttribute.Id, this.UniqueID.Replace("$", "_") + "Email");
+            //ToDo: build label for Email
+            //writer.RenderBeginTag(HtmlTextWriterTag.Label);
+            //writer.RenderEndTag();
+
+            writer.AddAttribute(HtmlTextWriterAttribute.Id, this.UniqueID + this.IdSeparator + "Email");
+            writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID + this.IdSeparator + "Email");
             writer.AddAttribute(HtmlTextWriterAttribute.Type, "Text");
-            writer.AddAttribute(HtmlTextWriterAttribute.Title, _EmailTitle);
+            writer.AddAttribute(HtmlTextWriterAttribute.Title, EmailTitle);
+            writer.AddAttribute(HtmlTextWriterAttribute.Value, Email);
+            writer.RenderBeginTag(HtmlTextWriterTag.Input);
+            writer.RenderEndTag();
+
+            writer.AddAttribute(HtmlTextWriterAttribute.Id, this.UniqueID + this.IdSeparator + "Password");
+            writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID + this.IdSeparator + "Password");
+            writer.AddAttribute(HtmlTextWriterAttribute.Type, "Text");
+            writer.AddAttribute(HtmlTextWriterAttribute.Title, PasswordTitle);
+            writer.AddAttribute(HtmlTextWriterAttribute.Value, Password);
             writer.RenderBeginTag(HtmlTextWriterTag.Input);
             writer.RenderEndTag();
 
@@ -90,9 +180,11 @@ namespace Company.CustomControls
             writer.AddAttribute(HtmlTextWriterAttribute.Type, "submit");
             writer.AddAttribute(HtmlTextWriterAttribute.Value, "Entrar");
             writer.AddAttribute(HtmlTextWriterAttribute.Id, this.UniqueID);
+            writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID);
+            //writer.AddAttribute(HtmlTextWriterAttribute.Onclick,
+            //        Page.ClientScript.GetPostBackEventReference(this, Serialize(new LoginEventArgs(Email, Password))));
             writer.RenderBeginTag(HtmlTextWriterTag.Input);
             writer.RenderEndTag();
-            
         }
 
         public enum LoginLayout : byte
@@ -104,11 +196,8 @@ namespace Company.CustomControls
         [Serializable]
         public class LoginEventArgs : EventArgs
         {
-            public string _Email;
-            public string _Password;
-
-            public string Email { get { return _Email; } private set { _Email = value; } }
-            public string Password { get { return _Password; } private set { _Password = value; } }
+            public string Email;
+            public string Password;
 
             public LoginEventArgs() { }
             public LoginEventArgs(string Email, string Password)
@@ -119,4 +208,3 @@ namespace Company.CustomControls
         }
     }
 }
-    

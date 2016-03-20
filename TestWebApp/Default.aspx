@@ -9,8 +9,9 @@
 <body>
     <form id="form1" runat="server" method="post">
     <div>
-    <ccc:LoginControl ID="LoginControl1" runat="server" EmailTitle="Email" PasswordTitle="Password" Layout="Portrait" OnSubmit="LoginControl1_Submit" ></ccc:LoginControl>
+    <ccc:LoginControl ID="LoginControl1" runat="server" EmailTitle="Email" PasswordTitle="Password" Layout="Portrait" OnSubmit="LoginControl1_Submit" OnEmailChanged="LoginControl1_EmailChanged"></ccc:LoginControl>
         <asp:Label ID="lblEmail" runat="server"></asp:Label>
+        <asp:Label ID="lblEmailChanged" runat="server"></asp:Label>
         </div>
     </form>
 </body>

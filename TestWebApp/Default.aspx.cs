@@ -19,7 +19,12 @@ namespace TestWebApp
 
         protected void LoginControl1_Submit(object sender, Company.CustomControls.LoginControl.LoginEventArgs e)
         {
-            lblEmail.Text = LoginControl1.Email;
+            lblEmail.Text = e.Email;
+        }
+
+        protected void LoginControl1_EmailChanged(object sender, Company.CustomControls.LoginControl.LoginEventArgs e)
+        {
+            lblEmailChanged.Text = e.Email;
         }
     }
 }
