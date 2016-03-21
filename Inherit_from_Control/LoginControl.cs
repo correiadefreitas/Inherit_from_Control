@@ -12,11 +12,11 @@ namespace Company.CustomControls
     [ToolboxData("<{0}:LoginControl runat=server></{0}:LoginControl>")]
     [System.Drawing.ToolboxBitmap(typeof(TextBox))]
     [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
-    [DefaultProperty("Email")]
+    [DefaultProperty("LoginLayout")]
     [Serializable]
     public class LoginControl : Control, IPostBackEventHandler , IPostBackDataHandler
     {
-        public delegate void LoginEventHandler(object sender, LoginEventArgs Old);
+        public delegate void LoginEventHandler(object sender, LoginEventArgs e);
         public event LoginEventHandler Submit;
 
         private string _Email;
@@ -26,9 +26,6 @@ namespace Company.CustomControls
         private string _PasswordTitle;
         private string _ClientScriptGetEmail;
 
-
-        [Category("Appearance")]
-        [DefaultValue("")]
         private string Email {
             get {
                 return _Email;
@@ -47,6 +44,8 @@ namespace Company.CustomControls
             }
         }
 
+        [Category("Appearance")]
+        [DefaultValue("")]
         public LoginLayout Layout {
             get {
                 return _Layout;
@@ -56,6 +55,8 @@ namespace Company.CustomControls
             }
         }
 
+        [Category("Appearance")]
+        [DefaultValue("Email")]
         public string EmailTitle {
             get {
                 return _EmailTitle;
@@ -65,6 +66,8 @@ namespace Company.CustomControls
             }
         }
 
+        [Category("Appearance")]
+        [DefaultValue("Password")]
         public string PasswordTitle {
             get {
                 return _PasswordTitle;
