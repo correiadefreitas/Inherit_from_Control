@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
+using Company.CustomControls;
 
 namespace TestWebApp
 {
@@ -13,18 +10,48 @@ namespace TestWebApp
         {
             if (!IsPostBack)
             {
-                LoginControl1.EmailTitle = "aaa";
+                LoginControl1.EmailTitle = "Email 1";
+                LoginControl2.EmailTitle = "Email 2";
+                LoginControl3.EmailTitle = "Email 3";
+                LoginControl4.EmailTitle = "Email 4";
+                LoginControl5.EmailTitle = "Email 5";
             }
+
         }
 
-        protected void LoginControl1_Submit(object sender, Company.CustomControls.LoginControl.LoginEventArgs e)
+        protected void LoginControl1_Submit(object sender, LoginControl.LoginEventArgs e)
         {
-            lblEmail.Text = e.Email;
+            lblNewEmail.Text = e.NewEmail;
+            lblOldEmail.Text = e.OldEmail;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "LoginControl1_", "alert(" + LoginControl1.ClientScriptGetEmail + ");", true);
         }
 
-        protected void LoginControl1_EmailChanged(object sender, Company.CustomControls.LoginControl.LoginEventArgs e)
+        protected void LoginControl2_Submit(object sender, LoginControl.LoginEventArgs e)
         {
-            lblEmailChanged.Text = e.Email;
+            lblNewEmail.Text = e.NewEmail;
+            lblOldEmail.Text = e.OldEmail;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "LoginControl2_", "alert(" + LoginControl2.ClientScriptGetEmail + ");", true);
+        }
+
+        protected void LoginControl5_Submit(object sender, LoginControl.LoginEventArgs e)
+        {
+            lblNewEmail.Text = e.NewEmail;
+            lblOldEmail.Text = e.OldEmail;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "LoginControl3_", "alert(" + LoginControl5.ClientScriptGetEmail + ");", true);
+        }
+
+        protected void LoginControl4_Submit(object sender, LoginControl.LoginEventArgs e)
+        {
+            lblNewEmail.Text = e.NewEmail;
+            lblOldEmail.Text = e.OldEmail;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "LoginControl4_", "alert(" + LoginControl4.ClientScriptGetEmail + ");", true);
+        }
+
+        protected void LoginControl3_Submit(object sender, LoginControl.LoginEventArgs e)
+        {
+            lblNewEmail.Text = e.NewEmail;
+            lblOldEmail.Text = e.OldEmail;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "LoginControl5_", "alert(" + LoginControl3.ClientScriptGetEmail + ");", true);
         }
     }
 }
